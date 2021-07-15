@@ -12,7 +12,34 @@ class Perceptron:
 
     # 학습
     def fit(self,X,y):
-        pass
+        ## 가중치를 담을 행렬 생성
+        ## shape[1]은 행렬 중에 행이다.
+        self.w_ = np.zeros(1 + X.shape[1]) 
+
+        #예측값과 실제값을 비교해서, 다른 예측값의 개수를 담을 리스트
+        self.errors_ = []
+        for _ in range(self.n_iter):
+            ## 예측값과 실제값이 다른 개수를 담을 변수
+            errors = 0
+
+            ## 임시변수 생성: 입력받은 입력값과 결과값을 묶는다.(pack)
+            temp1 = zip(X,y)
+
+            ## 루프돌림: 입력값과 결과값을 묵음을 가지고, 반복
+            for xi, target in temp1:
+                ## 입력값을 가지고 예측
+                a1 = self.predict(xi)
+                # 입력값과 예측값이 다른 경우 가중치 계산
+                if target != a1:
+                    update = self.eta *(target - a1)
+                    self.w_[1:] += update * xi
+                    self.w_[0] += update
+                    #값이 다른 횟수를 누적
+                    errors += int(update != 0.0)
+            ## 값이 다른 횟수값을 배열에 담는다. 
+            self.errors_.append(errors)
+            print(self.w_)
+
 
     # 가중치 * 입력값 총합 계산
     # X: 입력값
@@ -28,4 +55,3 @@ class Perceptron:
     def predict(self,X):
         a2= np.where(self.net_input(X)> self.thresholds,1,-1)
         return a2
-
